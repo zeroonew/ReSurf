@@ -22,17 +22,6 @@ ReSurf extends SparseSurf with a **Floater pipeline** — a 6-stage outlier supp
 
 **Outlier attribution (S2→Gaussian)**: Each Gaussian's own camera-space depth z_i is compared against the stereo depth at its projected pixel D_s(p_i). A Gaussian is flagged only when it lies clearly **in front** of the stereo surface (f_i = D_s - z_i > τ), the geometric signature of a floater. Gaussians behind the surface are not flagged (may be occluded structure).
 
-## ConfSurf Innovations (A1–A4, currently disabled in experiments)
-
-The codebase also contains confidence-driven extensions inherited from the original ConfSurf design. These are **disabled by default** in the Floater experiments:
-
-| Module | Idea | Switch |
-|--------|------|--------|
-| **A1** Continuous confidence | Soft confidence-weighted stereo losses instead of binary mask | `--use_confidence_weighting {0,1}` |
-| **A2** Adaptive multi-baseline | Cross-baseline depth fusion with uncertainty | `--adaptive_baseline {0,1}` |
-| **A3** Confidence-aware schedule | Quality-EMA-gated stereo prior scheduling | `--confidence_aware_schedule {0,1}` |
-| **B** Normal-guided propagation | Propagate depth along surface tangent into occluded regions | `--enable_depth_propagation {0,1}` |
-
 ## Key Floater Hyper-parameters
 
 | Parameter | Default | Description |
@@ -136,10 +125,10 @@ CUDA_VISIBLE_DEVICES=0 python train.py \
   --n_views 3 \
   --iterations 7000 \
   --enable_floater 1 \
-  --use_confidence_weighting 0 \
-  --adaptive_baseline 0 \
-  --confidence_aware_schedule 0 \
-  --enable_depth_propagation 0 \
+  --prune_depth_diff_thresh 0.01 \
+  --prune_rel_floor 0.01 \
+  --prune_mad_k 2.5 \
+  --max_prune_ratio 0.1 \
   --foundation_stereo_ckpt utils/FoundationStereo/pretrained_models/23-51-11/model_best_bp2-001.pth
 ```
 
